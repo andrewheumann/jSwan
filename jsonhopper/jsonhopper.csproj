@@ -43,6 +43,7 @@
     <Reference Include="Grasshopper, Version=6.14.19118.15560, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.14.19118.15561\lib\net45\Grasshopper.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -62,8 +63,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Deserialize.cs" />
+    <Compile Include="JsonDict.cs" />
     <Compile Include="jsonhopperInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialize.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

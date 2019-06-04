@@ -66,9 +66,10 @@ namespace jsonhopper
             }
             else
             {
-                for (int i = 0; i < deserialized.Children().Count(); i++)
+                var children = deserialized.Children().ToList();
+                for (int i = 0; i < children.Count; i++)
                 {
-                    var child = deserialized.Children()[i];
+                    var child = children[i];
                     if (child is JProperty property)
                     {
                         if (property.Value is JArray array)
@@ -77,7 +78,7 @@ namespace jsonhopper
                         }
                         else
                         {
-                            DA.SetData(i, child);
+                            DA.SetData(i, property.Value);
 
                         }
                     }
@@ -92,7 +93,22 @@ namespace jsonhopper
 
         private bool OutputMismatch()
         {
-            return deserialized.Children().Count() != Params.Output.Count;
+            var countMatch = deserialized.Children().Count() == Params.Output.Count;
+            if (!countMatch) return true;
+
+            var children = deserialized.Children().ToList();
+            for (int i = 0; i < children.Count; i++)
+            {
+                if (children[i] is JProperty property)
+                {
+                    if (Params.Output[i].NickName != property.Name)
+                    {
+                        return true;
+                    }
+                }
+
+            }
+            return false;
         }
 
         private void AutoCreateOutputs(bool recompute)
@@ -154,10 +170,13 @@ namespace jsonhopper
 
         public void VariableParameterMaintenance()
         {
-            var tokens = deserialized.Children();
+            var tokens = deserialized?.Children().ToList();
+            if (tokens == null) return;
             for (int i = 0; i < Params.Output.Count; i++)
             {
                 var token = tokens[i];
+                var ttype = token.GetType();
+                var prop = tokens.First();
                 if (token is JProperty property)
                 {
                     Params.Output[i].Name = $"{property.Name}";
