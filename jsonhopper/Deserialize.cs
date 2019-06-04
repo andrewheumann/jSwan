@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Grasshopper.Kernel.Parameters;
+using System.Linq;
 
 // In order to load the result of this wizard, you will also need to
 // add the output bin/ folder of this project to the list of loaded
@@ -11,7 +15,7 @@ using Rhino.Geometry;
 
 namespace jsonhopper
 {
-    public class Deserialize : GH_Component
+    public class Deserialize : GH_Component, IGH_VariableParameterComponent
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -32,6 +36,7 @@ namespace jsonhopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddTextParameter("JSON", "J", "The Json to parse", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -41,6 +46,7 @@ namespace jsonhopper
         {
         }
 
+        JObject deserialized = null;
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
@@ -48,6 +54,128 @@ namespace jsonhopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            var json = "";
+            if (!DA.GetData("JSON", ref json)) return;
+            deserialized = JsonConvert.DeserializeObject<JObject>(json);
+            if (OutputMismatch())
+            {
+                OnPingDocument().ScheduleSolution(5, (d) =>
+                {
+                    AutoCreateOutputs(false);
+                });
+            }
+            else
+            {
+                for (int i = 0; i < deserialized.Children().Count(); i++)
+                {
+                    var child = deserialized.Children()[i];
+                    if (child is JProperty property)
+                    {
+                        if (property.Value is JArray array)
+                        {
+                            DA.SetDataList(i, array);
+                        }
+                        else
+                        {
+                            DA.SetData(i, child);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+        {
+            GH_DocumentObject.Menu_AppendItem(menu, "Match outputs", Menu_AutoCreateOutputs_Clicked);
+        }
+
+        private bool OutputMismatch()
+        {
+            return deserialized.Children().Count() != Params.Output.Count;
+        }
+
+        private void AutoCreateOutputs(bool recompute)
+        {
+            var tokens = deserialized.Children();
+            var tokenCount = tokens.Count();
+
+            var outputParamCount = Params.Output.Count;
+
+            if (OutputMismatch())
+            {
+                RecordUndoEvent("Output from Json");
+                if (Params.Output.Count < tokenCount)
+                {
+                    while (Params.Output.Count < tokenCount)
+                    {
+                        IGH_Param new_param = CreateParameter(GH_ParameterSide.Output, Params.Output.Count);
+                        Params.RegisterOutputParam(new_param);
+                    }
+                }
+                else if (Params.Output.Count > tokenCount)
+                {
+                    while (Params.Output.Count > tokenCount)
+                    {
+                        Params.UnregisterOutputParameter(Params.Output[Params.Output.Count - 1]);
+                    }
+                }
+                Params.OnParametersChanged();
+                VariableParameterMaintenance();
+                ExpireSolution(recompute);
+            }
+        }
+
+        private void Menu_AutoCreateOutputs_Clicked(object sender, EventArgs e)
+        {
+
+            AutoCreateOutputs(true);
+        }
+
+        public bool CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+
+        public bool CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+
+        public IGH_Param CreateParameter(GH_ParameterSide side, int index)
+        {
+            return new Param_GenericObject();
+        }
+
+        public bool DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return true;
+        }
+
+        public void VariableParameterMaintenance()
+        {
+            var tokens = deserialized.Children();
+            for (int i = 0; i < Params.Output.Count; i++)
+            {
+                var token = tokens[i];
+                if (token is JProperty property)
+                {
+                    Params.Output[i].Name = $"{property.Name}";
+                    Params.Output[i].NickName = $"{property.Name}";
+                    Params.Output[i].Description = $"Data from property: {property.Name}";
+                    Params.Output[i].MutableNickName = false;
+                    if (property.Value is JArray)
+                    {
+                        Params.Output[i].Access = GH_ParamAccess.list;
+                    }
+                    else
+                    {
+                        Params.Output[i].Access = GH_ParamAccess.item;
+
+                    }
+
+                }
+            }
         }
 
         /// <summary>
@@ -69,9 +197,6 @@ namespace jsonhopper
         /// It is vital this Guid doesn't change otherwise old ghx files 
         /// that use the old ID will partially fail during loading.
         /// </summary>
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("22786e9f-f9df-46cc-8815-c2eb104e3455"); }
-        }
+        public override Guid ComponentGuid => new Guid("22786e9f-f9df-46cc-8815-c2eb104e3455");
     }
 }
