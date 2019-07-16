@@ -85,6 +85,10 @@ namespace jsonhopper
             if (!DA.GetData("JSON", ref json)) return;
 
             var deserialized = DeserializeToObject(json);
+            if(deserialized == null)
+            {
+                return;
+            }
 
             if (DA.Iteration == 0)
             {
@@ -94,7 +98,7 @@ namespace jsonhopper
                .OfType<GH_String>()
                .Select(s => DeserializeToObject(s.Value));
 
-                var children = allData.SelectMany(d => d.Children()).ToList();
+                var children = allData.SelectMany(d => { return d == null ? new JEnumerable<JToken>() : d.Children(); }).ToList();
 
                 var allProperties = children.OfType<JProperty>();
 
