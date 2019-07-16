@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Grasshopper.Kernel.Parameters;
 using System.Linq;
+using GH_IO.Serialization;
+using Grasshopper.Kernel.Types;
 
 // In order to load the result of this wizard, you will also need to
 // add the output bin/ folder of this project to the list of loaded
@@ -29,6 +31,7 @@ namespace jsonhopper
               "deserialize it",
               "JsonHopper", "JsonHopper")
         {
+            UpdateMessage();
         }
 
         /// <summary>
@@ -46,7 +49,31 @@ namespace jsonhopper
         {
         }
 
+
+
+        Dictionary<string, Type> uniqueChildPropertyNames;
         JObject deserialized = null;
+        private bool outputsLocked;
+
+
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetBoolean("OutputsLocked", outputsLocked);
+            return base.Write(writer);
+        }
+
+        public override bool Read(GH_IReader reader)
+        {
+            reader.TryGetBoolean("OutputsLocked", ref outputsLocked);
+            UpdateMessage();
+            return base.Read(reader);
+        }
+
+        private void UpdateMessage()
+        {
+            Message = outputsLocked ? "Locked" : "";
+        }
+
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
@@ -56,8 +83,36 @@ namespace jsonhopper
         {
             var json = "";
             if (!DA.GetData("JSON", ref json)) return;
-            deserialized = JsonConvert.DeserializeObject<JObject>(json);
-            if (OutputMismatch())
+
+            var deserialized = DeserializeToObject(json);
+
+            if (DA.Iteration == 0)
+            {
+                var allData = Params.Input.OfType<Param_String>()
+               .First()
+               .VolatileData.AllData(true)
+               .OfType<GH_String>()
+               .Select(s => DeserializeToObject(s.Value));
+
+                var children = allData.SelectMany(d => d.Children()).ToList();
+
+                var allProperties = children.OfType<JProperty>();
+
+                uniqueChildPropertyNames = new Dictionary<string, Type>();
+
+                foreach (var property in allProperties)
+                {
+                    if (!uniqueChildPropertyNames.ContainsKey(property.Name))
+                    {
+                        uniqueChildPropertyNames.Add(property.Name, property.GetType());
+                    }
+                }
+
+                var names = allProperties.Select(c => c.Name).Distinct().ToList();
+            }
+
+
+            if (OutputMismatch() && !outputsLocked && DA.Iteration == 0)
             {
                 OnPingDocument().ScheduleSolution(5, (d) =>
                 {
@@ -67,54 +122,87 @@ namespace jsonhopper
             else
             {
                 var children = deserialized.Children().ToList();
+
                 for (int i = 0; i < children.Count; i++)
                 {
                     var child = children[i];
                     if (child is JProperty property)
                     {
+
+                        if (!Params.Output.Any(p => p.Name == property.Name))
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "There's a property here that doesn't match the outputs...");
+                            continue;
+                        }
+
                         if (property.Value is JArray array)
                         {
-                            DA.SetDataList(i, array);
+                            DA.SetDataList(property.Name, array);
                         }
                         else
                         {
-                            DA.SetData(i, property.Value);
+                            DA.SetData(property.Name, property.Value);
 
                         }
                     }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Found a child that's not a property. IDK what do with that yet");
+                    }
                 }
+            }
+        }
+
+        private JObject DeserializeToObject(string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<JObject>(json);
+
+            }
+            catch
+            {
+                var array = JsonConvert.DeserializeObject<JArray>(json);
+                var newObj = new JObject();
+                newObj.Add("array", array);
+                return newObj;
             }
         }
 
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
             GH_DocumentObject.Menu_AppendItem(menu, "Match outputs", Menu_AutoCreateOutputs_Clicked);
+            GH_DocumentObject.Menu_AppendItem(menu, "Lock Outputs", Menu_LockOutputs_Clicked, true, outputsLocked);
+
+        }
+
+        private void Menu_LockOutputs_Clicked(object sender, EventArgs e)
+        {
+            outputsLocked = !outputsLocked;
+            UpdateMessage();
         }
 
         private bool OutputMismatch()
         {
-            var countMatch = deserialized.Children().Count() == Params.Output.Count;
+            var countMatch = uniqueChildPropertyNames.Count() == Params.Output.Count;
             if (!countMatch) return true;
 
-            var children = deserialized.Children().ToList();
-            for (int i = 0; i < children.Count; i++)
+            foreach (var name in uniqueChildPropertyNames)
             {
-                if (children[i] is JProperty property)
+                if (!Params.Output.Select(p => p.NickName).Any(n => n == name.Key))
                 {
-                    if (Params.Output[i].NickName != property.Name)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
             }
+
             return false;
         }
 
         private void AutoCreateOutputs(bool recompute)
         {
-            var tokens = deserialized.Children();
-            var tokenCount = tokens.Count();
+
+            //var tokens = deserialized.Children();
+            var tokenCount = uniqueChildPropertyNames.Count();
 
             var outputParamCount = Params.Output.Count;
 
@@ -170,30 +258,29 @@ namespace jsonhopper
 
         public void VariableParameterMaintenance()
         {
-            var tokens = deserialized?.Children().ToList();
+            var tokens = uniqueChildPropertyNames;
             if (tokens == null) return;
+            var names = tokens.Keys.ToList();
             for (int i = 0; i < Params.Output.Count; i++)
             {
-                var token = tokens[i];
-                var ttype = token.GetType();
-                var prop = tokens.First();
-                if (token is JProperty property)
-                {
-                    Params.Output[i].Name = $"{property.Name}";
-                    Params.Output[i].NickName = $"{property.Name}";
-                    Params.Output[i].Description = $"Data from property: {property.Name}";
-                    Params.Output[i].MutableNickName = false;
-                    if (property.Value is JArray)
-                    {
-                        Params.Output[i].Access = GH_ParamAccess.list;
-                    }
-                    else
-                    {
-                        Params.Output[i].Access = GH_ParamAccess.item;
+                var name = names[i];
+                var type = tokens[name];
 
-                    }
+                Params.Output[i].Name = $"{name}";
+                Params.Output[i].NickName = $"{name}";
+                Params.Output[i].Description = $"Data from property: {name}";
+                Params.Output[i].MutableNickName = false;
+                if (type.IsAssignableFrom(typeof(JArray)))
+                {
+                    Params.Output[i].Access = GH_ParamAccess.list;
+                }
+                else
+                {
+                    Params.Output[i].Access = GH_ParamAccess.item;
 
                 }
+
+
             }
         }
 

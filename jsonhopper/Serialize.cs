@@ -47,20 +47,36 @@ namespace jsonhopper
             for (int i = 0; i < Params.Input.Count; i++)
             {
                 string name = Params.Input[i].NickName;
-                List<dynamic> dataValues = new List<dynamic>();
-                DA.GetDataList(i, dataValues);
-
+                var access = Params.Input[i].Access;
                 try
                 {
-                    if(dataValues.Count == 1)
+                    switch(access)
                     {
-                        ValueOutput[name] = dataValues.FirstOrDefault().Value;
-
-                    } else
-                    {
-                        ValueOutput[name] = dataValues.Select(v => v.Value);
+                        case GH_ParamAccess.item:
+                            dynamic dataValue = null;
+                            DA.GetData(i, ref dataValue);
+                            ValueOutput[name] = dataValue?.Value;
+                            break;
+                        case GH_ParamAccess.list:
+                            List<dynamic> dataValues = new List<dynamic>();
+                            DA.GetDataList(i, dataValues);
+                            ValueOutput[name] = dataValues.Select(v => v?.Value);
+                            break;
                     }
-                } catch (Exception e)
+                    //if(dataValues.Count == 1)
+                    //{
+                    //    ValueOutput[name] = dataValues.FirstOrDefault().Value;
+
+                    //} else
+                    //{
+                    //    ValueOutput[name] = dataValues.Select(v => v.Value);
+                    //}
+
+
+
+
+                }
+                catch (Exception e)
                 {
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
                 }
@@ -83,7 +99,7 @@ namespace jsonhopper
 
         public IGH_Param CreateParameter(GH_ParameterSide side, int index)
         {
-            var param = new Param_GenericObject();
+            var param = new Param_JsonInput();
             param.NickName = "-";
             return param;
         }
@@ -102,14 +118,15 @@ namespace jsonhopper
                 {
                     param.Name = $"Data {i + 1}";
                     param.NickName = $"d{i + 1}";
-                } else
+                }
+                else
                 {
                     param.Name = param.NickName;
                 }
                 param.Description = $"Input {i + 1}";
                 param.Optional = true;
                 param.MutableNickName = true;
-                param.Access = GH_ParamAccess.list;
+                param.Access = GH_ParamAccess.item;
             }
         }
 
