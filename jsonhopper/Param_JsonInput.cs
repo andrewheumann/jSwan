@@ -3,12 +3,13 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace jsonhopper
+namespace jSwan
 {
     public class Param_JsonInput : Param_GenericObject
     {
@@ -56,6 +57,8 @@ namespace jsonhopper
 
             }
         }
+
+        protected override Bitmap Icon => Properties.Resources.param_jswan;
 
         public override Guid ComponentGuid => new Guid("{6965B371-D035-4A6D-9B69-4BB67673959B}");
 

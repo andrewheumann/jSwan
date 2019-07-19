@@ -2,15 +2,15 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 
-namespace jsonhopper
+namespace jSwan
 {
-    public class jsonhopperInfo : GH_AssemblyInfo
+    public class jSwanInfo : GH_AssemblyInfo
     {
         public override string Name
         {
             get
             {
-                return "jsonhopper";
+                return "jSwan";
             }
         }
         public override Bitmap Icon
@@ -42,7 +42,7 @@ namespace jsonhopper
             get
             {
                 //Return a string identifying you or your company.
-                return "";
+                return "Andrew Heumann";
             }
         }
         public override string AuthorContact

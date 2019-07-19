@@ -8,8 +8,8 @@
     <ProjectGuid>{5C28A83B-E55A-4C54-83EF-E7BC6ACED091}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>jsonhopper</RootNamespace>
-    <AssemblyName>jsonhopper</AssemblyName>
+    <RootNamespace>jSwan</RootNamespace>
+    <AssemblyName>jSwan</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -64,13 +64,33 @@
   <ItemGroup>
     <Compile Include="Deserialize.cs" />
     <Compile Include="JsonDict.cs" />
-    <Compile Include="jsonhopperInfo.cs" />
+    <Compile Include="jSwanInfo.cs" />
     <Compile Include="Param_JsonInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Serialize.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\deserialize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\param_jswan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\serialize.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -15,7 +15,7 @@ using Grasshopper.Kernel.Types;
 // folder in Grasshopper.
 // You can use the _GrasshopperDeveloperSettings Rhino command for that.
 
-namespace jsonhopper
+namespace jSwan
 {
     public class Deserialize : GH_Component, IGH_VariableParameterComponent
     {
@@ -29,7 +29,7 @@ namespace jsonhopper
         public Deserialize()
           : base("Deserialize Json", "DeJson",
               "deserialize it",
-              "JsonHopper", "JsonHopper")
+              "jSwan", "jSwan")
         {
             UpdateMessage();
         }
@@ -51,8 +51,7 @@ namespace jsonhopper
 
 
 
-        Dictionary<string, Type> uniqueChildPropertyNames;
-        JObject deserialized = null;
+        Dictionary<string, Type> uniqueChildProperties;
         private bool outputsLocked;
 
 
@@ -102,13 +101,13 @@ namespace jsonhopper
 
                 var allProperties = children.OfType<JProperty>();
 
-                uniqueChildPropertyNames = new Dictionary<string, Type>();
+                uniqueChildProperties = new Dictionary<string, Type>();
 
                 foreach (var property in allProperties)
                 {
-                    if (!uniqueChildPropertyNames.ContainsKey(property.Name))
+                    if (!uniqueChildProperties.ContainsKey(property.Name))
                     {
-                        uniqueChildPropertyNames.Add(property.Name, property.GetType());
+                        uniqueChildProperties.Add(property.Name, property.GetType());
                     }
                 }
 
@@ -188,10 +187,10 @@ namespace jsonhopper
 
         private bool OutputMismatch()
         {
-            var countMatch = uniqueChildPropertyNames.Count() == Params.Output.Count;
+            var countMatch = uniqueChildProperties.Count() == Params.Output.Count;
             if (!countMatch) return true;
 
-            foreach (var name in uniqueChildPropertyNames)
+            foreach (var name in uniqueChildProperties)
             {
                 if (!Params.Output.Select(p => p.NickName).Any(n => n == name.Key))
                 {
@@ -206,7 +205,7 @@ namespace jsonhopper
         {
 
             //var tokens = deserialized.Children();
-            var tokenCount = uniqueChildPropertyNames.Count();
+            var tokenCount = uniqueChildProperties.Count();
 
             var outputParamCount = Params.Output.Count;
 
@@ -262,7 +261,7 @@ namespace jsonhopper
 
         public void VariableParameterMaintenance()
         {
-            var tokens = uniqueChildPropertyNames;
+            var tokens = uniqueChildProperties;
             if (tokens == null) return;
             var names = tokens.Keys.ToList();
             for (int i = 0; i < Params.Output.Count; i++)
@@ -292,15 +291,7 @@ namespace jsonhopper
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                // You can add image files to your project resources and access them like this:
-                //return Resources.IconForThisComponent;
-                return null;
-            }
-        }
+        protected override System.Drawing.Bitmap Icon =>  Properties.Resources.deserialize;
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 
@@ -308,5 +299,7 @@ namespace jsonhopper
         /// that use the old ID will partially fail during loading.
         /// </summary>
         public override Guid ComponentGuid => new Guid("22786e9f-f9df-46cc-8815-c2eb104e3455");
+
+        
     }
 }

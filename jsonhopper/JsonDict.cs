@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace jsonhopper
+namespace jSwan
 {
     public class JsonDict : Dictionary<string, object>
     {

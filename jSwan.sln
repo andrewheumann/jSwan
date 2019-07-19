@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jsonhopper", "jsonhopper\jsonhopper.csproj", "{5C28A83B-E55A-4C54-83EF-E7BC6ACED091}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jSwan", "jSwan\jSwan.csproj", "{5C28A83B-E55A-4C54-83EF-E7BC6ACED091}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

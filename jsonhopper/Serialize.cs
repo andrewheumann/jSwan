@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using Grasshopper.Kernel.Types;
 
-namespace jsonhopper
+namespace jSwan
 {
     public class Serialize : GH_Component, IGH_VariableParameterComponent
     {
@@ -18,7 +18,7 @@ namespace jsonhopper
         public Serialize()
           : base("Serialize Json", "ReJson",
               "Serialize it",
-              "JsonHopper", "JsonHopper")
+              "jSwan", "jSwan")
         {
         }
 
@@ -63,15 +63,6 @@ namespace jsonhopper
                             ValueOutput[name] = dataValues.Select(v => v?.Value);
                             break;
                     }
-                    //if(dataValues.Count == 1)
-                    //{
-                    //    ValueOutput[name] = dataValues.FirstOrDefault().Value;
-
-                    //} else
-                    //{
-                    //    ValueOutput[name] = dataValues.Select(v => v.Value);
-                    //}
-
 
 
 
@@ -133,7 +124,7 @@ namespace jsonhopper
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.serialize;
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
