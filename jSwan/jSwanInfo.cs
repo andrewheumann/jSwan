@@ -6,6 +6,9 @@ namespace jSwan
 {
     public class jSwanInfo : GH_AssemblyInfo
     {
+
+        public override string Version => "1.0.0";
+
         public override string Name
         {
             get
@@ -26,7 +29,7 @@ namespace jSwan
             get
             {
                 //Return a short string describing the purpose of this GHA library.
-                return "";
+                return "A utility library for deserializing and composing JSON. ";
             }
         }
         public override Guid Id

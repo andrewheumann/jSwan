@@ -140,11 +140,11 @@ namespace jSwan
 
                         if (property.Value is JArray array)
                         {
-                            DA.SetDataList(property.Name, array);
+                            DA.SetDataList(property.Name, array.Select(t => t.ToSimpleValue()));
                         }
                         else
                         {
-                            DA.SetData(property.Name, property.Value);
+                            DA.SetData(property.Name, property.Value.ToSimpleValue());
 
                         }
                     }
@@ -266,6 +266,7 @@ namespace jSwan
             var names = tokens.Keys.ToList();
             for (int i = 0; i < Params.Output.Count; i++)
             {
+                if (i > names.Count - 1) return;
                 var name = names[i];
                 var type = tokens[name];
 

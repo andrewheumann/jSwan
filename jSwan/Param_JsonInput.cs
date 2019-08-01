@@ -52,8 +52,8 @@ namespace jSwan
             if (Kind != GH_ParamKind.output)
             {
 
-                GH_DocumentObject.Menu_AppendItem(menu, "Item Access", Menu_ItemAccessClicked, true, Access == GH_ParamAccess.item);
-                GH_DocumentObject.Menu_AppendItem(menu, "List Access", Menu_ListAccessClicked, true, Access == GH_ParamAccess.list);
+                Menu_AppendItem(menu, "Item Access", Menu_ItemAccessClicked, true, Access == GH_ParamAccess.item);
+                Menu_AppendItem(menu, "List Access", Menu_ListAccessClicked, true, Access == GH_ParamAccess.list);
 
             }
         }
