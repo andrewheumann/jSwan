@@ -117,7 +117,7 @@ namespace jSwan
                 param.Description = $"Input {i + 1}";
                 param.Optional = true;
                 param.MutableNickName = true;
-                param.Access = GH_ParamAccess.item;
+                //param.Access = GH_ParamAccess.item;
             }
         }
 
