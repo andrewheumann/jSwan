@@ -237,6 +237,7 @@ namespace jSwan
         {
 
             AutoCreateOutputs(true);
+            UpdateMessage();
         }
 
         public bool CanInsertParameter(GH_ParameterSide side, int index)

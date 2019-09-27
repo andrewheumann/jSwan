@@ -63,8 +63,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Deserialize.cs" />
+    <Compile Include="JDictGoo.cs" />
     <Compile Include="JsonDict.cs" />
     <Compile Include="jSwanInfo.cs" />
+    <Compile Include="JTokenGoo.cs" />
     <Compile Include="Param_JsonInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -7,6 +7,8 @@ using Rhino.Geometry;
 using Newtonsoft.Json;
 using System.Linq;
 using Grasshopper.Kernel.Types;
+using GH_IO.Serialization;
+using System.Windows.Forms;
 
 namespace jSwan
 {
@@ -20,7 +22,10 @@ namespace jSwan
               "Serialize it",
               "jSwan", "jSwan")
         {
+            includeNullAndEmptyProperties = false;
         }
+
+        private bool includeNullAndEmptyProperties;
 
         /// <summary>
         /// Registers all the input parameters for this component.
@@ -50,17 +55,24 @@ namespace jSwan
                 var access = Params.Input[i].Access;
                 try
                 {
-                    switch(access)
+                    switch (access)
                     {
                         case GH_ParamAccess.item:
                             dynamic dataValue = null;
                             DA.GetData(i, ref dataValue);
-                            ValueOutput[name] = dataValue?.Value;
+                            var rawValue = dataValue?.Value;
+                            if (includeNullAndEmptyProperties || rawValue != null)
+                            {
+                                ValueOutput[name] = rawValue;
+                            }
                             break;
                         case GH_ParamAccess.list:
                             List<dynamic> dataValues = new List<dynamic>();
                             DA.GetDataList(i, dataValues);
-                            ValueOutput[name] = dataValues.Select(v => v?.Value);
+                            if (includeNullAndEmptyProperties || dataValues.Where(v => v != null).Count() > 0)
+                            {
+                                ValueOutput[name] = dataValues.Select(v => v?.Value);
+                            }
                             break;
                     }
 
@@ -74,7 +86,7 @@ namespace jSwan
 
             }
 
-            DA.SetData("JSON", ValueOutput);
+            if (ValueOutput.Count > 0) DA.SetData("JSON", new JDictGoo(ValueOutput));
 
         }
 
@@ -119,6 +131,37 @@ namespace jSwan
                 param.MutableNickName = true;
                 //param.Access = GH_ParamAccess.item;
             }
+        }
+
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetBoolean("IncludeNullAndEmptyProperties", includeNullAndEmptyProperties);
+            return base.Write(writer);
+        }
+
+        public override bool Read(GH_IReader reader)
+        {
+            reader.TryGetBoolean("IncludeNullAndEmptyProperties", ref includeNullAndEmptyProperties);
+            UpdateMessage();
+            return base.Read(reader);
+        }
+
+        private void UpdateMessage()
+        {
+            Message = includeNullAndEmptyProperties ? "Locked" : "";
+        }
+
+        protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+        {
+            GH_DocumentObject.Menu_AppendItem(menu, "Lock Structure (Include null and empty properties)", Menu_LockOutput_Clicked, true, includeNullAndEmptyProperties);
+
+        }
+
+        private void Menu_LockOutput_Clicked(object sender, EventArgs e)
+        {
+            includeNullAndEmptyProperties = !includeNullAndEmptyProperties;
+            ExpireSolution(true);
+            UpdateMessage();
         }
 
         /// <summary>

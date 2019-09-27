@@ -26,7 +26,7 @@ namespace jSwan
                 case JTokenType.Float:
                     return token.Value<double>();
                 default:
-                    return token;
+                    return new JTokenGoo(token);
             }
         }
     }
