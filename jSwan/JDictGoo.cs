@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace jSwan
 {
-    public class JDictGoo : GH_Goo<JsonDict>
+    public class JDictGoo : GH_Goo<JsonDict>, IDisposable
     {
 
         public JDictGoo() : base()
@@ -57,6 +57,11 @@ namespace jSwan
                 Value = JsonConvert.DeserializeObject<JsonDict>(content);
             }
             return base.Read(reader);
+        }
+        
+        public void Dispose()
+        {
+            Value = null;
         }
     }
 }

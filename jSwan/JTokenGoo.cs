@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace jSwan
 {
-    public class JTokenGoo : GH_Goo<JToken>
+    public class JTokenGoo : GH_Goo<JToken>, IDisposable
     {
         public JTokenGoo() : base()
         {
@@ -57,6 +57,11 @@ namespace jSwan
         {
             writer.SetString("Content", ToString());
             return base.Write(writer);
+        }
+
+        public void Dispose()
+        {
+            Value = null;
         }
     }
 }
