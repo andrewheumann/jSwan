@@ -12,20 +12,18 @@ using System.Windows.Forms;
 
 namespace jSwan
 {
-    public class Serialize : GH_Component, IGH_VariableParameterComponent
+    public class Serialize : JSwanComponent, IGH_VariableParameterComponent
     {
         /// <summary>
         /// Initializes a new instance of the Serialize class.
         /// </summary>
         public Serialize()
           : base("Serialize Json", "ReJson",
-              "Serialize it",
-              "jSwan", "jSwan")
+              "Serialize it")
         {
-            includeNullAndEmptyProperties = false;
+            StructureLocked = false;
         }
-
-        private bool includeNullAndEmptyProperties;
+        
 
         /// <summary>
         /// Registers all the input parameters for this component.
@@ -61,7 +59,7 @@ namespace jSwan
                             dynamic dataValue = null;
                             DA.GetData(i, ref dataValue);
                             var rawValue = dataValue?.Value;
-                            if (includeNullAndEmptyProperties || rawValue != null)
+                            if (StructureLocked || rawValue != null)
                             {
                                 ValueOutput[name] = rawValue;
                             }
@@ -69,7 +67,7 @@ namespace jSwan
                         case GH_ParamAccess.list:
                             List<dynamic> dataValues = new List<dynamic>();
                             DA.GetDataList(i, dataValues);
-                            if (includeNullAndEmptyProperties || dataValues.Where(v => v != null).Count() > 0)
+                            if (StructureLocked || dataValues.Where(v => v != null).Count() > 0)
                             {
                                 ValueOutput[name] = dataValues.Select(v => v?.Value);
                             }
@@ -135,31 +133,32 @@ namespace jSwan
 
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetBoolean("IncludeNullAndEmptyProperties", includeNullAndEmptyProperties);
+            writer.SetBoolean("IncludeNullAndEmptyProperties", StructureLocked);
             return base.Write(writer);
         }
 
         public override bool Read(GH_IReader reader)
         {
-            reader.TryGetBoolean("IncludeNullAndEmptyProperties", ref includeNullAndEmptyProperties);
+            bool locked = false;
+            if(reader.TryGetBoolean("IncludeNullAndEmptyProperties", ref locked))
+            {
+                StructureLocked = locked;
+            }
             UpdateMessage();
             return base.Read(reader);
         }
 
-        private void UpdateMessage()
-        {
-            Message = includeNullAndEmptyProperties ? "Locked" : "";
-        }
+     
 
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
-            GH_DocumentObject.Menu_AppendItem(menu, "Lock Structure (Include null and empty properties)", Menu_LockOutput_Clicked, true, includeNullAndEmptyProperties);
-
+            GH_DocumentObject.Menu_AppendItem(menu, "Lock Structure (Include null and empty properties)", Menu_LockOutput_Clicked, true, StructureLocked);
+            base.AppendAdditionalComponentMenuItems(menu);
         }
 
         private void Menu_LockOutput_Clicked(object sender, EventArgs e)
         {
-            includeNullAndEmptyProperties = !includeNullAndEmptyProperties;
+            StructureLocked = !StructureLocked;
             ExpireSolution(true);
             UpdateMessage();
         }

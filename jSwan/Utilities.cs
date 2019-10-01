@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Grasshopper.Kernel;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,18 @@ namespace jSwan
 {
     public static class Utilities
     {
+
+        public static void LockAllJswanComponents(GH_Document doc)
+        {
+            doc.Objects.OfType<JSwanComponent>().ToList().ForEach(c =>
+            {
+                c.StructureLocked = true;
+                c.UpdateMessage();
+            });
+        }
+
+        
+
         public static object ToSimpleValue(this JToken token)
         {
             switch(token.Type)

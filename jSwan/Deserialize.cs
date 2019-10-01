@@ -18,7 +18,7 @@ using System.IO;
 
 namespace jSwan
 {
-    public class Deserialize : GH_Component, IGH_VariableParameterComponent
+    public class Deserialize : JSwanComponent, IGH_VariableParameterComponent
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -29,8 +29,7 @@ namespace jSwan
         /// </summary>
         public Deserialize()
           : base("Deserialize Json", "DeJson",
-              "deserialize it",
-              "jSwan", "jSwan")
+              "deserialize it")
         {
             UpdateMessage();
         }
@@ -53,26 +52,27 @@ namespace jSwan
 
 
         Dictionary<string, Type> uniqueChildProperties;
-        private bool outputsLocked;
+       
 
 
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetBoolean("OutputsLocked", outputsLocked);
+            writer.SetBoolean("OutputsLocked", StructureLocked);
             return base.Write(writer);
         }
 
         public override bool Read(GH_IReader reader)
         {
-            reader.TryGetBoolean("OutputsLocked", ref outputsLocked);
+            bool locked = false;
+            if(reader.TryGetBoolean("OutputsLocked", ref locked))
+            {
+                StructureLocked = locked;
+            }
             UpdateMessage();
             return base.Read(reader);
         }
 
-        private void UpdateMessage()
-        {
-            Message = outputsLocked ? "Locked" : "";
-        }
+       
 
         /// <summary>
         /// This is the method that actually does the work.
@@ -123,7 +123,7 @@ namespace jSwan
             }
 
 
-            if (OutputMismatch() && !outputsLocked && DA.Iteration == 0)
+            if (OutputMismatch() && !StructureLocked && DA.Iteration == 0)
             {
                 OnPingDocument().ScheduleSolution(5, (d) =>
                 {
@@ -183,13 +183,15 @@ namespace jSwan
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
             GH_DocumentObject.Menu_AppendItem(menu, "Match outputs", Menu_AutoCreateOutputs_Clicked);
-            GH_DocumentObject.Menu_AppendItem(menu, "Lock Outputs", Menu_LockOutputs_Clicked, true, outputsLocked);
-
+            GH_DocumentObject.Menu_AppendItem(menu, "Lock Outputs", Menu_LockOutputs_Clicked, true, StructureLocked);
+            base.AppendAdditionalComponentMenuItems(menu);
         }
+
+        
 
         private void Menu_LockOutputs_Clicked(object sender, EventArgs e)
         {
-            outputsLocked = !outputsLocked;
+            StructureLocked = !StructureLocked;
             UpdateMessage();
         }
 
