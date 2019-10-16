@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Deserialize.cs" />
+    <Compile Include="DeserializeKV.cs" />
     <Compile Include="JDictGoo.cs" />
     <Compile Include="JsonDict.cs" />
     <Compile Include="JSwanComponent.cs" />

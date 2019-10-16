@@ -52,7 +52,7 @@ namespace jSwan
 
 
         Dictionary<string, Type> uniqueChildProperties;
-       
+
 
 
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -64,7 +64,7 @@ namespace jSwan
         public override bool Read(GH_IReader reader)
         {
             bool locked = false;
-            if(reader.TryGetBoolean("OutputsLocked", ref locked))
+            if (reader.TryGetBoolean("OutputsLocked", ref locked))
             {
                 StructureLocked = locked;
             }
@@ -72,7 +72,7 @@ namespace jSwan
             return base.Read(reader);
         }
 
-       
+
 
         /// <summary>
         /// This is the method that actually does the work.
@@ -85,14 +85,14 @@ namespace jSwan
             if (!DA.GetData("JSON", ref json)) return;
 
             //handle intaking a filepath as well as raw json
-            if(File.Exists(json))
-            {
-                json = File.ReadAllText(json);
-            }
+            //if (File.Exists(json))
+            //{
+            //    json = File.ReadAllText(json);
+            //}
 
 
             var deserialized = DeserializeToObject(json);
-            if(deserialized == null)
+            if (deserialized == null)
             {
                 return;
             }
@@ -166,8 +166,14 @@ namespace jSwan
 
         private JObject DeserializeToObject(string json)
         {
+
+
             try
             {
+                if (json.Contains(".json") && File.Exists(json))
+                {
+                    json = File.ReadAllText(json);
+                }
                 return JsonConvert.DeserializeObject<JObject>(json);
 
             }
@@ -187,7 +193,7 @@ namespace jSwan
             base.AppendAdditionalComponentMenuItems(menu);
         }
 
-        
+
 
         private void Menu_LockOutputs_Clicked(object sender, EventArgs e)
         {
@@ -303,7 +309,7 @@ namespace jSwan
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon =>  Properties.Resources.deserialize;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.deserialize;
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 
@@ -312,6 +318,6 @@ namespace jSwan
         /// </summary>
         public override Guid ComponentGuid => new Guid("22786e9f-f9df-46cc-8815-c2eb104e3455");
 
-        
+
     }
 }
