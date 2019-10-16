@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace jSwan
 {
-    public class Param_JsonInput : Param_GenericObject
+    public class Param_JsonInput : Param_GenericObject, IDisposable
     {
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
@@ -89,5 +89,9 @@ namespace jSwan
             return result;
         }
 
+        public void Dispose()
+        {
+            this.ClearData();
+        }
     }
 }

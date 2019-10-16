@@ -18,8 +18,11 @@ using System.IO;
 
 namespace jSwan
 {
-    public class Deserialize : JSwanComponent, IGH_VariableParameterComponent
+    public class Deserialize : JSwanComponent, IGH_VariableParameterComponent, IDisposable
     {
+        Dictionary<string, Type> uniqueChildProperties;
+
+
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
         /// constructor without any arguments.
@@ -48,12 +51,6 @@ namespace jSwan
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
         }
-
-
-
-        Dictionary<string, Type> uniqueChildProperties;
-       
-
 
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
@@ -211,6 +208,16 @@ namespace jSwan
             return false;
         }
 
+        public override void ClearData()
+        {
+            base.ClearData();
+            uniqueChildProperties.Clear();
+            foreach (var ghParam in Params)
+            {
+                ghParam.ClearData();
+            }
+        }
+
         private void AutoCreateOutputs(bool recompute)
         {
 
@@ -312,6 +319,10 @@ namespace jSwan
         /// </summary>
         public override Guid ComponentGuid => new Guid("22786e9f-f9df-46cc-8815-c2eb104e3455");
 
-        
+
+        public void Dispose()
+        {
+            this.ClearData();
+        }
     }
 }
