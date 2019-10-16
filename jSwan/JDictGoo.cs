@@ -62,6 +62,7 @@ namespace jSwan
         public void Dispose()
         {
             Value = null;
+            m_value = null;
         }
     }
 }
