@@ -211,10 +211,11 @@ namespace jSwan
         public override void ClearData()
         {
             base.ClearData();
-            uniqueChildProperties.Clear();
+            uniqueChildProperties?.Clear();
+            if (Params == null || !Params.Any()) return;
             foreach (var ghParam in Params)
             {
-                ghParam.ClearData();
+                ghParam?.ClearData();
             }
         }
 
@@ -323,6 +324,10 @@ namespace jSwan
         public void Dispose()
         {
             this.ClearData();
+            foreach (var ghParam in this.Params)
+            {
+                ghParam.ClearData();
+            }
         }
     }
 }
