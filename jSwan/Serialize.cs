@@ -46,45 +46,44 @@ namespace jSwan
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            using (var valueOutput = new JsonDict())
+            var valueOutput = new JsonDict();
+            for (int i = 0; i < Params.Input.Count; i++)
             {
-                for (int i = 0; i < Params.Input.Count; i++)
+                string name = Params.Input[i].NickName;
+                var access = Params.Input[i].Access;
+                try
                 {
-                    string name = Params.Input[i].NickName;
-                    var access = Params.Input[i].Access;
-                    try
+                    switch (access)
                     {
-                        switch (access)
-                        {
-                            case GH_ParamAccess.item:
-                                dynamic dataValue = null;
-                                DA.GetData(i, ref dataValue);
-                                var rawValue = dataValue?.Value;
-                                if (StructureLocked || rawValue != null)
-                                {
-                                    valueOutput[name] = rawValue;
-                                }
+                        case GH_ParamAccess.item:
+                            dynamic dataValue = null;
+                            DA.GetData(i, ref dataValue);
+                            var rawValue = dataValue?.Value;
+                            if (StructureLocked || rawValue != null)
+                            {
+                                valueOutput[name] = rawValue;
+                            }
 
-                                break;
-                            case GH_ParamAccess.list:
-                                List<dynamic> dataValues = new List<dynamic>();
-                                DA.GetDataList(i, dataValues);
-                                if (StructureLocked || dataValues.Where(v => v != null).Count() > 0)
-                                {
-                                    valueOutput[name] = dataValues.Select(v => v?.Value);
-                                }
+                            break;
+                        case GH_ParamAccess.list:
+                            List<dynamic> dataValues = new List<dynamic>();
+                            DA.GetDataList(i, dataValues);
+                            if (StructureLocked || dataValues.Where(v => v != null).Count() > 0)
+                            {
+                                valueOutput[name] = dataValues.Select(v => v?.Value);
+                            }
 
-                                break;
-                        }
+                            break;
                     }
-                    catch (Exception e)
-                    {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
-                    }
-
-                    if (valueOutput.Count > 0) DA.SetData("JSON", new JDictGoo(valueOutput));
                 }
+                catch (Exception e)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+                }
+
+                if (valueOutput.Count > 0) DA.SetData("JSON", new JDictGoo(valueOutput));
             }
+        
         }
 
         public bool CanInsertParameter(GH_ParameterSide side, int index)
