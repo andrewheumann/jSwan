@@ -10,6 +10,7 @@ using System.Linq;
 using GH_IO.Serialization;
 using Grasshopper.Kernel.Types;
 using System.IO;
+using System.Text.RegularExpressions;
 
 // In order to load the result of this wizard, you will also need to
 // add the output bin/ folder of this project to the list of loaded
@@ -81,20 +82,14 @@ namespace jSwan
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             var json = "";
-            if (!DA.GetData("JSON", ref json)) return;
+            DA.GetData("JSON", ref json);
+
 
             //handle intaking a filepath as well as raw json
             //if (File.Exists(json))
             //{
             //    json = File.ReadAllText(json);
             //}
-
-
-            var deserialized = DeserializeToObject(json);
-            if (deserialized == null)
-            {
-                return;
-            }
 
             if (DA.Iteration == 0)
             {
@@ -103,7 +98,10 @@ namespace jSwan
                .VolatileData.AllData(true)
                .OfType<GH_String>()
                .Select(s => DeserializeToObject(s.Value));
-
+                if (!allData.Any())
+                {
+                    return;
+                }
                 var children = allData.SelectMany(d => { return d == null ? new JEnumerable<JToken>() : d.Children(); }).ToList();
 
                 var allProperties = children.OfType<JProperty>();
@@ -114,12 +112,14 @@ namespace jSwan
                 {
                     if (!uniqueChildProperties.ContainsKey(property.Name))
                     {
-                        uniqueChildProperties.Add(property.Name, property.GetType());
+                        uniqueChildProperties.Add(property.Name, property.Value.GetType());
                     }
                 }
 
                 var names = allProperties.Select(c => c.Name).Distinct().ToList();
             }
+
+
 
 
             if (OutputMismatch() && !StructureLocked && DA.Iteration == 0)
@@ -131,6 +131,11 @@ namespace jSwan
             }
             else
             {
+                var deserialized = DeserializeToObject(json);
+                if (deserialized == null)
+                {
+                    return;
+                }
                 var children = deserialized.Children().ToList();
 
                 for (int i = 0; i < children.Count; i++)
@@ -144,6 +149,7 @@ namespace jSwan
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "There's a property here that doesn't match the outputs...");
                             continue;
                         }
+
 
                         if (property.Value is JArray array)
                         {
@@ -169,19 +175,31 @@ namespace jSwan
 
             try
             {
-                if (json.Contains(".json") && File.Exists(json))
+                var last4 = json.Substring(Math.Max(0, json.Length - 4)).ToUpper();
+                if (last4.Equals("JSON") && File.Exists(json))
                 {
                     json = File.ReadAllText(json);
+                }
+                //if (json.Contains(".json") && File.Exists(json))
+                //{
+                    
+                //}
+                var obj = JsonConvert.DeserializeObject(json);
+                if (obj is JObject jobj)
+                {
+                    return jobj;
+                } else if (obj is JArray jarr)
+                {
+                    var newObj = new JObject();
+                    newObj.Add("array", jarr);
+                    return newObj;
                 }
                 return JsonConvert.DeserializeObject<JObject>(json);
 
             }
             catch
             {
-                var array = JsonConvert.DeserializeObject<JArray>(json);
-                var newObj = new JObject();
-                newObj.Add("array", array);
-                return newObj;
+                return null;
             }
         }
 
@@ -232,7 +250,7 @@ namespace jSwan
 
             //var tokens = deserialized.Children();
             var tokenCount = uniqueChildProperties.Count();
-
+            if (tokenCount == 0) return;
             var outputParamCount = Params.Output.Count;
 
             if (OutputMismatch())
