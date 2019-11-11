@@ -113,6 +113,10 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" %25appdata%25\Grasshopper\Libraries\$(ProjectName).gha
+Copy "$(TargetPath)" $(SolutionDir)dist\$(ProjectName).gha
+cd $(SolutionDir)dist\
+yak build
+
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
