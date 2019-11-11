@@ -1,9 +1,9 @@
 ---
-name: jswan
-version: <version>
+name: jSwan
+version: 1.1.0
 authors:
 - Andrew Heumann
-description: <description>
+description: A utility for serializing and deserializing JSON
 url: <url>
 secret:
   id: 048b6ac2-b3b3-473f-a17a-12f289de8413

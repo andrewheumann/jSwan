@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
-using Rhino.Geometry;
-using Newtonsoft.Json;
+using System.Drawing;
 using System.Linq;
-using Grasshopper.Kernel.Types;
-using GH_IO.Serialization;
 using System.Windows.Forms;
+using GH_IO.Serialization;
+using Grasshopper.Kernel;
+using jSwan.Properties;
 
 namespace jSwan
 {
-    public class Serialize : JSwanComponent, IGH_VariableParameterComponent
+    public class Serialize : LockableJSwanComponent, IGH_VariableParameterComponent
     {
         /// <summary>
         /// Initializes a new instance of the Serialize class.
@@ -28,14 +25,14 @@ namespace jSwan
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("JSON", "J", "The JSON Output", GH_ParamAccess.item);
         }
@@ -47,9 +44,9 @@ namespace jSwan
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             var valueOutput = new JsonDict();
-            for (int i = 0; i < Params.Input.Count; i++)
+            for (var i = 0; i < Params.Input.Count; i++)
             {
-                string name = Params.Input[i].NickName;
+                var name = Params.Input[i].NickName;
                 var access = Params.Input[i].Access;
                 try
                 {
@@ -66,9 +63,9 @@ namespace jSwan
 
                             break;
                         case GH_ParamAccess.list:
-                            List<dynamic> dataValues = new List<dynamic>();
+                            var dataValues = new List<dynamic>();
                             DA.GetDataList(i, dataValues);
-                            if (StructureLocked || dataValues.Where(v => v != null).Count() > 0)
+                            if (StructureLocked || dataValues.Any(v => v != null))
                             {
                                 valueOutput[name] = dataValues.Select(v => v?.Value);
                             }
@@ -98,8 +95,7 @@ namespace jSwan
 
         public IGH_Param CreateParameter(GH_ParameterSide side, int index)
         {
-            var param = new Param_JsonInput();
-            param.NickName = "-";
+            var param = new Param_JsonInput {NickName = "-"};
             return param;
         }
 
@@ -110,7 +106,7 @@ namespace jSwan
 
         public void VariableParameterMaintenance()
         {
-            for (int i = 0; i < Params.Input.Count; i++)
+            for (var i = 0; i < Params.Input.Count; i++)
             {
                 var param = Params.Input[i];
                 if (param.NickName == "-")
@@ -129,7 +125,7 @@ namespace jSwan
             }
         }
 
-        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        public override bool Write(GH_IWriter writer)
         {
             writer.SetBoolean("IncludeNullAndEmptyProperties", StructureLocked);
             return base.Write(writer);
@@ -137,7 +133,7 @@ namespace jSwan
 
         public override bool Read(GH_IReader reader)
         {
-            bool locked = false;
+            var locked = false;
             if(reader.TryGetBoolean("IncludeNullAndEmptyProperties", ref locked))
             {
                 StructureLocked = locked;
@@ -146,11 +142,12 @@ namespace jSwan
             return base.Read(reader);
         }
 
-     
+
+        public override LockableJSwanComponent.ComponentType Type => LockableJSwanComponent.ComponentType.Serialize;
 
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
-            GH_DocumentObject.Menu_AppendItem(menu, "Lock Structure (Include null and empty properties)", Menu_LockOutput_Clicked, true, StructureLocked);
+            Menu_AppendItem(menu, "Lock Structure (Include null and empty properties)", Menu_LockOutput_Clicked, true, StructureLocked);
             base.AppendAdditionalComponentMenuItems(menu);
         }
 
@@ -164,7 +161,7 @@ namespace jSwan
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.serialize;
+        protected override Bitmap Icon => Resources.serialize;
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.

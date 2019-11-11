@@ -73,6 +73,16 @@ namespace jSwan.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap deserializekv {
+            get {
+                object obj = ResourceManager.GetObject("deserializekv", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap param_jswan {
             get {
                 object obj = ResourceManager.GetObject("param_jswan", resourceCulture);
@@ -86,6 +96,16 @@ namespace jSwan.Properties {
         internal static System.Drawing.Bitmap serialize {
             get {
                 object obj = ResourceManager.GetObject("serialize", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap serializekv {
+            get {
+                object obj = ResourceManager.GetObject("serializekv", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

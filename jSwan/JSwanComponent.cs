@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,7 @@ namespace jSwan
     public abstract class JSwanComponent : GH_Component
     {
 
-        internal bool StructureLocked { get; set; }
-
+       
         public JSwanComponent() : base()
         {
 
@@ -23,20 +23,15 @@ namespace jSwan
 
         }
 
-        internal void UpdateMessage()
+        public static string TryGetJsonFromFile(string json)
         {
-            Message = StructureLocked ? "Locked" : "";
-        }
+            var last4 = json.Substring(Math.Max(0, json.Length - 4)).ToUpper();
+            if (last4.Equals("JSON") && File.Exists(json))
+            {
+                json = File.ReadAllText(json);
+            }
 
-        protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
-        {
-            GH_DocumentObject.Menu_AppendItem(menu, "Lock All JSwan Components", Menu_LockAllOutputs_Clicked, true, false);
-            base.AppendAdditionalComponentMenuItems(menu);
-        }
-
-        private void Menu_LockAllOutputs_Clicked(object sender, EventArgs e)
-        {
-            Utilities.LockAllJswanComponents(OnPingDocument());
+            return json;
         }
 
 

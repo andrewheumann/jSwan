@@ -45,7 +45,7 @@ namespace jSwan
 
         public override bool Read(GH_IReader reader)
         {
-            string content = "";
+            var content = "";
             if(reader.TryGetString("Content", ref content))
             {
                 Value = JsonConvert.DeserializeObject<JToken>(content);
@@ -62,7 +62,7 @@ namespace jSwan
         public void Dispose()
         {
             Value = null;
-            this.m_value = null;
+            m_value = null;
         }
     }
 }

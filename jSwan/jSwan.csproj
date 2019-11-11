@@ -69,6 +69,7 @@
     <Compile Include="JSwanComponent.cs" />
     <Compile Include="jSwanInfo.cs" />
     <Compile Include="JTokenGoo.cs" />
+    <Compile Include="LockableJSwanComponent.cs" />
     <Compile Include="Param_JsonInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -77,6 +78,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Serialize.cs" />
+    <Compile Include="SerializeKV.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +98,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\serialize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\deserializekv.png" />
+    <Content Include="Resources\serializekv.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

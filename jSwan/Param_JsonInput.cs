@@ -35,6 +35,7 @@ namespace jSwan
             }
         }
 
+        //currently unused, leaving in just in case
         private void Menu_TreeAccessClicked(object sender, EventArgs e)
         {
             if (Access != GH_ParamAccess.tree)
@@ -64,7 +65,7 @@ namespace jSwan
 
         public override bool Write(GH_IWriter writer)
         {
-            bool result = base.Write(writer);
+            var result = base.Write(writer);
             writer.SetInt32("ScriptParamAccess", (int)Access);
             return result;
         }
@@ -72,7 +73,7 @@ namespace jSwan
 
         public override bool Read(GH_IReader reader)
         {
-            bool result = base.Read(reader);
+            var result = base.Read(reader);
            
             if (reader.ItemExists("ScriptParamAccess"))
             {

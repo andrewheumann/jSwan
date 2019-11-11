@@ -51,7 +51,7 @@ namespace jSwan
 
         public override bool Read(GH_IReader reader)
         {
-            string content = "";
+            var content = "";
             if (reader.TryGetString("Content", ref content))
             {
                 Value = JsonConvert.DeserializeObject<JsonDict>(content);

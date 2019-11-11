@@ -46,7 +46,10 @@ namespace jSwan
         {
             var json = "";
             if (!DA.GetData("JSON", ref json)) return;
-            List<string> keys = new List<string>();
+            var keys = new List<string>();
+
+            json = TryGetJsonFromFile(json);
+
             var deserialized = JsonConvert.DeserializeObject<Dictionary<string, JToken>>(json);
             if (DA.GetDataList("Keys", keys))
             {
@@ -65,11 +68,12 @@ namespace jSwan
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.deserializekv;
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
         public override Guid ComponentGuid => new Guid("01e741f7-35bb-4e64-bd80-e304135374c7");
+
     }
 }

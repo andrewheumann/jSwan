@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
+using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
+using jSwan.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Grasshopper.Kernel.Parameters;
-using System.Linq;
-using GH_IO.Serialization;
-using Grasshopper.Kernel.Types;
-using System.IO;
-using System.Text.RegularExpressions;
 
 // In order to load the result of this wizard, you will also need to
 // add the output bin/ folder of this project to the list of loaded
@@ -19,7 +18,7 @@ using System.Text.RegularExpressions;
 
 namespace jSwan
 {
-    public class Deserialize : JSwanComponent, IGH_VariableParameterComponent, IDisposable
+    public class Deserialize : LockableJSwanComponent, IGH_VariableParameterComponent, IDisposable
     {
         Dictionary<string, Type> uniqueChildProperties;
 
@@ -41,7 +40,7 @@ namespace jSwan
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("JSON", "J", "The Json to parse", GH_ParamAccess.item);
         }
@@ -49,13 +48,13 @@ namespace jSwan
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
         }
 
 
 
-        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        public override bool Write(GH_IWriter writer)
         {
             writer.SetBoolean("OutputsLocked", StructureLocked);
             return base.Write(writer);
@@ -63,7 +62,7 @@ namespace jSwan
 
         public override bool Read(GH_IReader reader)
         {
-            bool locked = false;
+            var locked = false;
             if (reader.TryGetBoolean("OutputsLocked", ref locked))
             {
                 StructureLocked = locked;
@@ -85,12 +84,6 @@ namespace jSwan
             DA.GetData("JSON", ref json);
 
 
-            //handle intaking a filepath as well as raw json
-            //if (File.Exists(json))
-            //{
-            //    json = File.ReadAllText(json);
-            //}
-
             if (DA.Iteration == 0)
             {
                 var allData = Params.Input.OfType<Param_String>()
@@ -102,7 +95,7 @@ namespace jSwan
                 {
                     return;
                 }
-                var children = allData.SelectMany(d => { return d == null ? new JEnumerable<JToken>() : d.Children(); }).ToList();
+                var children = allData.SelectMany(d => d?.Children() ?? new JEnumerable<JToken>()).ToList();
 
                 var allProperties = children.OfType<JProperty>();
 
@@ -119,12 +112,15 @@ namespace jSwan
                 var names = allProperties.Select(c => c.Name).Distinct().ToList();
             }
 
-
+            if (uniqueChildProperties.Count == 0)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,"No valid JSON properties found");
+            }
 
 
             if (OutputMismatch() && !StructureLocked && DA.Iteration == 0)
             {
-                OnPingDocument().ScheduleSolution(5, (d) =>
+                OnPingDocument().ScheduleSolution(5, d =>
                 {
                     AutoCreateOutputs(false);
                 });
@@ -138,7 +134,7 @@ namespace jSwan
                 }
                 var children = deserialized.Children().ToList();
 
-                for (int i = 0; i < children.Count; i++)
+                for (var i = 0; i < children.Count; i++)
                 {
                     var child = children[i];
                     if (child is JProperty property)
@@ -175,27 +171,20 @@ namespace jSwan
 
             try
             {
-                var last4 = json.Substring(Math.Max(0, json.Length - 4)).ToUpper();
-                if (last4.Equals("JSON") && File.Exists(json))
-                {
-                    json = File.ReadAllText(json);
-                }
-                //if (json.Contains(".json") && File.Exists(json))
-                //{
-                    
-                //}
+                json = TryGetJsonFromFile(json);
                 var obj = JsonConvert.DeserializeObject(json);
-                if (obj is JObject jobj)
+                switch (obj)
                 {
-                    return jobj;
-                } else if (obj is JArray jarr)
-                {
-                    var newObj = new JObject();
-                    newObj.Add("array", jarr);
-                    return newObj;
+                    case JObject jobj:
+                        return jobj;
+                    case JArray jarr:
+                    {
+                        var newObj = new JObject {{"array", jarr}};
+                        return newObj;
+                    }
+                    default:
+                        return JsonConvert.DeserializeObject<JObject>(json);
                 }
-                return JsonConvert.DeserializeObject<JObject>(json);
-
             }
             catch
             {
@@ -203,10 +192,14 @@ namespace jSwan
             }
         }
 
+        
+
+        public override ComponentType Type => ComponentType.Deserialize;
+
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
-            GH_DocumentObject.Menu_AppendItem(menu, "Match outputs", Menu_AutoCreateOutputs_Clicked);
-            GH_DocumentObject.Menu_AppendItem(menu, "Lock Outputs", Menu_LockOutputs_Clicked, true, StructureLocked);
+            Menu_AppendItem(menu, "Match outputs", Menu_AutoCreateOutputs_Clicked);
+            Menu_AppendItem(menu, "Lock Outputs", Menu_LockOutputs_Clicked, true, StructureLocked);
             base.AppendAdditionalComponentMenuItems(menu);
         }
 
@@ -248,10 +241,8 @@ namespace jSwan
         private void AutoCreateOutputs(bool recompute)
         {
 
-            //var tokens = deserialized.Children();
             var tokenCount = uniqueChildProperties.Count();
             if (tokenCount == 0) return;
-            var outputParamCount = Params.Output.Count;
 
             if (OutputMismatch())
             {
@@ -260,7 +251,7 @@ namespace jSwan
                 {
                     while (Params.Output.Count < tokenCount)
                     {
-                        IGH_Param new_param = CreateParameter(GH_ParameterSide.Output, Params.Output.Count);
+                        var new_param = CreateParameter(GH_ParameterSide.Output, Params.Output.Count);
                         Params.RegisterOutputParam(new_param);
                     }
                 }
@@ -309,7 +300,7 @@ namespace jSwan
             var tokens = uniqueChildProperties;
             if (tokens == null) return;
             var names = tokens.Keys.ToList();
-            for (int i = 0; i < Params.Output.Count; i++)
+            for (var i = 0; i < Params.Output.Count; i++)
             {
                 if (i > names.Count - 1) return;
                 var name = names[i];
@@ -337,7 +328,7 @@ namespace jSwan
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.deserialize;
+        protected override Bitmap Icon => Resources.deserialize;
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 
@@ -349,8 +340,8 @@ namespace jSwan
 
         public void Dispose()
         {
-            this.ClearData();
-            foreach (var ghParam in this.Params)
+            ClearData();
+            foreach (var ghParam in Params)
             {
                 ghParam.ClearData();
             }

@@ -16,7 +16,7 @@ namespace jSwan
 
         public void Dispose()
         {
-            this.Clear();
+            Clear();
         }
     }
 }

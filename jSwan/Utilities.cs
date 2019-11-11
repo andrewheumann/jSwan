@@ -11,9 +11,9 @@ namespace jSwan
     public static class Utilities
     {
 
-        public static void LockAllJswanComponents(GH_Document doc)
+        public static void LockAllJswanComponents(GH_Document doc, LockableJSwanComponent.ComponentType Type)
         {
-            doc.Objects.OfType<JSwanComponent>().ToList().ForEach(c =>
+            doc.Objects.OfType<LockableJSwanComponent>().Where(c => c.Type == Type).ToList().ForEach(c =>
             {
                 c.StructureLocked = true;
                 c.UpdateMessage();
