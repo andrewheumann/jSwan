@@ -132,3 +132,7 @@ This component allows you to explicitly provide a list of values for the keys an
 This component lets you deconstruct JSON into lists of keys and values, rather than producing a separate output for every property. You can also supply an optional key input to select only certain keys from an object. 
 
 ![Desrialize KV Example](documentation/deserialize-kv-example.png)
+
+
+### Thanks ###
+Special thanks to Jonatan Schumacher, Leland Jobson, Serena Li, and Brian Ringley for their contributions to this project as users, testers, and contributors! 
