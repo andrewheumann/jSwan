@@ -116,6 +116,8 @@ For each top-level property of the JSON object, it will generate an output. Prop
 
 Outputs are generated automatically from the unique property names in the data. This means if the input data changes, the component itself may change "shape" by adding/removing outputs. To prevent this from happening, right click to "Lock" the structure of the component - this will prevent its structure from changing, and missing properties will come out as empty lists or nulls. You can choose "Lock All Deserialize Components" to lock all the deserialize components in your definition. 
 
+If you input a .JSON file path rather than JSON-formatted text, it will automatically read the contents of the file and deserialize that. Be aware that this may moderately affect performance as compared to using a separate ReadFile component!
+
 
 ### Serialize Keys and Values ###
 
