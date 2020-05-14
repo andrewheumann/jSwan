@@ -20,7 +20,7 @@ namespace jSwan
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Source JSON", "J", "The Json to modify", GH_ParamAccess.item);
+            pManager.AddTextParameter("Source Json", "J", "The Json to modify", GH_ParamAccess.item);
             pManager.AddTextParameter("Override Json", "O", "The Json to merge", GH_ParamAccess.item);
         }
 
@@ -31,8 +31,8 @@ namespace jSwan
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GH_String jsonA = null;
-            if (!DA.GetData(0, ref jsonA)) return;
+            DA.GetData("Source Json", ref var jsonA);
+            DA.GetData("Override Json", ref var jsonA);
 
             GH_String jsonB = null;
             if (!DA.GetData(1, ref jsonB)) return;
