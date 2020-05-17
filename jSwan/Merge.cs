@@ -31,16 +31,14 @@ namespace jSwan
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            DA.GetData("Source Json", ref var jsonA);
-            DA.GetData("Override Json", ref var jsonA);
+            string jsonA = "";
+            DA.GetData("Source Json", ref jsonA);
 
-            GH_String jsonB = null;
-            if (!DA.GetData(1, ref jsonB)) return;
+            string jsonB = "";
+            DA.GetData("Override Json", ref jsonB);
 
-            var a = JsonConvert.DeserializeObject<JObject>(jsonA.Value);
-            var b = JsonConvert.DeserializeObject<JObject>(jsonB.Value);
-
-
+            var a = JsonConvert.DeserializeObject<JObject>(jsonA);
+            var b = JsonConvert.DeserializeObject<JObject>(jsonB);
 
             a.Merge(b, new JsonMergeSettings
             {
@@ -48,9 +46,7 @@ namespace jSwan
                 MergeArrayHandling = MergeArrayHandling.Union
             });
 
-            //Do something
-
-            DA.SetData(0, new GH_String() { Value = a.ToString() });
+            DA.SetData("Merged Json", a.ToString());
         }
     }
 }
