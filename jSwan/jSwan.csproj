@@ -66,6 +66,7 @@
     <Compile Include="DeserializeKV.cs" />
     <Compile Include="JDictGoo.cs" />
     <Compile Include="JsonDict.cs" />
+    <Compile Include="JsonToXML.cs" />
     <Compile Include="JSwanComponent.cs" />
     <Compile Include="jSwanInfo.cs" />
     <Compile Include="JTokenGoo.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Serialize.cs" />
     <Compile Include="SerializeKV.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="XMLtoJSON.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

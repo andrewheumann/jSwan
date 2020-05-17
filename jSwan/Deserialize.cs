@@ -203,8 +203,6 @@ namespace jSwan
             base.AppendAdditionalComponentMenuItems(menu);
         }
 
-
-
         private void Menu_LockOutputs_Clicked(object sender, EventArgs e)
         {
             StructureLocked = !StructureLocked;
