@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,5 +43,8 @@ namespace jSwan
             var json = JsonConvert.SerializeXmlNode(doc);
             DA.SetData("JSON", json);
         }
+
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
+        protected override Bitmap Icon => Properties.Resources.XML_to_JSON;
     }
 }

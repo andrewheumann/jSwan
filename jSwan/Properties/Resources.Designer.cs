@@ -19,7 +19,7 @@ namespace jSwan.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -63,9 +63,9 @@ namespace jSwan.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap deserialize {
+        internal static System.Drawing.Bitmap Deserialize_JSON {
             get {
-                object obj = ResourceManager.GetObject("deserialize", resourceCulture);
+                object obj = ResourceManager.GetObject("Deserialize_JSON", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,29 @@ namespace jSwan.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap deserializekv {
+        internal static System.Drawing.Bitmap Deserialize_KV {
             get {
-                object obj = ResourceManager.GetObject("deserializekv", resourceCulture);
+                object obj = ResourceManager.GetObject("Deserialize_KV", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap JSON_to_XML {
+            get {
+                object obj = ResourceManager.GetObject("JSON_to_XML", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Merge_JSON {
+            get {
+                object obj = ResourceManager.GetObject("Merge_JSON", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +113,9 @@ namespace jSwan.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap serialize {
+        internal static System.Drawing.Bitmap Serialize_JSON {
             get {
-                object obj = ResourceManager.GetObject("serialize", resourceCulture);
+                object obj = ResourceManager.GetObject("Serialize_JSON", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +123,19 @@ namespace jSwan.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap serializekv {
+        internal static System.Drawing.Bitmap Serialize_KV {
             get {
-                object obj = ResourceManager.GetObject("serializekv", resourceCulture);
+                object obj = ResourceManager.GetObject("Serialize_KV", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap XML_to_JSON {
+            get {
+                object obj = ResourceManager.GetObject("XML_to_JSON", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

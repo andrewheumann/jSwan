@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace jSwan
 {
     public class Merge : JSwanComponent
     {
-        public Merge() : base("Merge Json", "JMerge", "Merge a subset of Json into a given string")
+        public Merge() : base("Merge Json", "JMerge", "Merge one object into another")
         {
         }
 
@@ -48,5 +49,8 @@ namespace jSwan
 
             DA.SetData("Merged Json", a.ToString());
         }
+
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        protected override Bitmap Icon => Properties.Resources.Merge_JSON;
     }
 }

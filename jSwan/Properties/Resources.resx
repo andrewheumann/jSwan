@@ -118,19 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="deserialize" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\deserialize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Deserialize_JSON" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Deserialize JSON.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="deserializekv" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\deserializekv.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Deserialize_KV" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Deserialize KV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="JSON_to_XML" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\JSON to XML.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Merge_JSON" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Merge JSON.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="param_jswan" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\param_jswan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="serialize" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\serialize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Serialize_JSON" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Serialize JSON.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="serializekv" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\serializekv.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Serialize_KV" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Serialize KV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XML_to_JSON" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XML to JSON.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

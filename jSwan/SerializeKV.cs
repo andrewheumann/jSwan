@@ -42,7 +42,7 @@ namespace jSwan
 
             if (keys.Count != 1 && values.Count != keys.Count)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,"Key and Value count mismatch. This component expects either one key for a whole list, or one key per item in a list.");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Key and Value count mismatch. This component expects either one key for a whole list, or one key per item in a list.");
                 return;
             }
 
@@ -61,10 +61,10 @@ namespace jSwan
             }
 
             if (valueOutput.Count > 0) DA.SetData("JSON", new JDictGoo(valueOutput));
-            
-
         }
 
-        protected override Bitmap Icon => Properties.Resources.serializekv;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
+
+        protected override Bitmap Icon => Properties.Resources.Serialize_KV;
     }
 }

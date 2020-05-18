@@ -94,17 +94,28 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\deserialize.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\param_jswan.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\serialize.png" />
+    <None Include="Resources\Serialize JSON.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\deserializekv.png" />
-    <Content Include="Resources\serializekv.png" />
+    <None Include="Resources\Serialize KV.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\XML to JSON.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Deserialize JSON.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Deserialize KV.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\JSON to XML.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Merge JSON.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -118,7 +129,7 @@
     <PostBuildEvent>Copy "$(TargetPath)" %25appdata%25\Grasshopper\Libraries\$(ProjectName).gha
 Copy "$(TargetPath)" $(SolutionDir)dist\$(ProjectName).gha
 cd $(SolutionDir)dist\
-yak build
+"C:\Program Files\Rhino WIP\System\Yak.exe" build
 
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>

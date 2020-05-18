@@ -161,7 +161,7 @@ namespace jSwan
         /// <summary>
         /// Provides an Icon for the component.
         /// </summary>
-        protected override Bitmap Icon => Resources.serialize;
+        protected override Bitmap Icon => Resources.Serialize_JSON;
 
         /// <summary>
         /// Gets the unique ID for this component. Do not change this ID after release.
