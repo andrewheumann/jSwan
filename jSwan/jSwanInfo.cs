@@ -9,6 +9,8 @@ namespace jSwan
 
         public override string Version => "1.2.0";
 
+        public override string AssemblyVersion => this.Version;
+
         public override string Name => "jSwan";
 
         public override Bitmap Icon => null;
