@@ -7,7 +7,7 @@ namespace jSwan
     public class jSwanInfo : GH_AssemblyInfo
     {
 
-        public override string Version => "1.2.0";
+        public override string Version => "1.2.1";
 
         public override string AssemblyVersion => this.Version;
 

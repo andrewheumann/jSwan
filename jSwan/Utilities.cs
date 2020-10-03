@@ -27,7 +27,7 @@ namespace jSwan
             switch(token.Type)
             {
                 case JTokenType.Integer:
-                    return token.Value<int>();
+                    return token.Value<Int64>();
                 case JTokenType.String:
                     return token.Value<string>();
                 case JTokenType.TimeSpan:

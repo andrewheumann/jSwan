@@ -46,7 +46,7 @@ namespace jSwan
                 return;
             }
 
-            if (keys.Count == 1) // process as an array
+            if (keys.Count == 1 && values.Count != 1) // process as an array
             {
                 valueOutput[keys.First()] = values.Select(v => v?.Value);
             }
