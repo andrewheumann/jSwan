@@ -27,7 +27,15 @@ namespace jSwan
             switch(token.Type)
             {
                 case JTokenType.Integer:
-                    return token.Value<Int64>();
+                    // Return Int32 whenever possible: Grasshopper converts it to GH_Integer,
+                    // while Int64 is only wrapped as generic Goo, which many components
+                    // (e.g. Addition, Member Index) cannot consume. Int64 is kept for large values.
+                    var value = token.Value<Int64>();
+                    if (value >= Int32.MinValue && value <= Int32.MaxValue)
+                    {
+                        return (int)value;
+                    }
+                    return value;
                 case JTokenType.String:
                     return token.Value<string>();
                 case JTokenType.TimeSpan:
